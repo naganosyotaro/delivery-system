@@ -13,6 +13,8 @@ RUN apt-get update && apt-get install -y \
     unzip \
     nginx \
     supervisor \
+    nodejs \
+    npm \
     && docker-php-ext-install pdo_mysql pdo_sqlite mbstring exif pcntl bcmath gd zip
 
 # Install Composer
@@ -24,8 +26,11 @@ WORKDIR /var/www
 # Copy application files
 COPY . .
 
-# Install dependencies
+# Install PHP dependencies
 RUN composer install --optimize-autoloader --no-dev
+
+# Install Node dependencies and build assets
+RUN npm install && npm run build
 
 # Create SQLite database
 RUN touch /var/www/database/database.sqlite
